@@ -33,7 +33,6 @@ namespace Monmer.Network
                     _stream.BeginRead(_receiveBuffer, 0, 4096 * 2, OnReceive, null);
 
                     /// TODO: Send Handshake to the server.
-                    /// PacketSender.ClientOnSend(); //Original
                     SendToServer(Message.Create(MessageCommand.Handshake, HandshakePayload.Create()));
                 }
                 else
@@ -66,8 +65,7 @@ namespace Monmer.Network
                 Array.Copy(_receiveBuffer, buffer, length);
 
                 /// TODO: Do something with incoming data
-                /// ClientHandler.HandleData(newBytes); //Original
-                HandleMessage(buffer.AsSerializable<Message>()); //New
+                HandleMessage(buffer.AsSerializable<Message>());
 
                 _stream.BeginRead(_receiveBuffer, 0, 4096 * 2, OnReceive, null);
             }

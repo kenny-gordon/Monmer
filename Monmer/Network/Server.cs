@@ -79,7 +79,6 @@ namespace Monmer.Network
         private static void OnHandshake(int connectionID, Message message)
         {
             var data = (HandshakePayload)message.Payload;
-            //Console.WriteLine("Server has Acknowleged Handshake from {0} @ {1}", RemoteClients[connectionID].Socket.Client.RemoteEndPoint, data.Timestamp);
 
             // Send Handshake Acknowlegment to Client
             SendToClient(connectionID, Message.Create(MessageCommand.HandshakeAck));
@@ -121,7 +120,6 @@ namespace Monmer.Network
                     Array.Copy(_receiveBuffer, buffer, length);
 
                     /// TODO: If Handshake is received by client send acknowledgement or disconect else handle incoming data
-                    /// ServerHandler.HandleData(ConnectionID, newBytes); //Original
                     HandleMessage(ConnectionID, buffer.AsSerializable<Message>()); //New
 
                     Stream.BeginRead(_receiveBuffer, 0, Socket.ReceiveBufferSize, OnReceive, null);
