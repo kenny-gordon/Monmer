@@ -1,4 +1,5 @@
 ﻿using Monmer.IO;
+using Monmer.Network.Payloads;
 using System.Net.Sockets;
 
 namespace Monmer.Network
@@ -33,10 +34,7 @@ namespace Monmer.Network
 
                     /// TODO: Send Handshake to the server.
                     /// PacketSender.ClientOnSend(); //Original
-                    /// 
-                    /// MessageHandler.Message(ConnectionID, buffer.AsSerializable<Message>()); //New
-                    /// 
-
+                    SendToServer(Message.Create(MessageCommand.Handshake, HandshakePayload.Create()));
                 }
                 else
                 {
@@ -97,7 +95,9 @@ namespace Monmer.Network
 
         private static void OnHandshakeAck()
         {
-            Console.WriteLine("Server at at {0} has Acknowleged Handshack", _socket.Client.LocalEndPoint);
+            SendToServer(Message.Create(MessageCommand.Handshake, HandshakePayload.Create()));
+
+            Console.WriteLine("Server at {0} has Acknowleged Handshake", _socket.Client.RemoteEndPoint);
         }
     }
 }

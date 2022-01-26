@@ -1,4 +1,5 @@
 ﻿using Monmer.IO;
+using Monmer.Network.Payloads;
 using System.Net;
 using System.Net.Sockets;
 
@@ -22,7 +23,7 @@ namespace Monmer.Network
             _listener.Start();
 
             // Start listening for connections.  
-            _listener.BeginAcceptSocket(new AsyncCallback(OnClientConnect), null);
+            _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), null);
 
             Console.WriteLine("Server Started on {0}", _listener.LocalEndpoint);
         }
@@ -30,8 +31,8 @@ namespace Monmer.Network
         private static void OnClientConnect(IAsyncResult asyncResult)
         {
             TcpClient remoteClient = _listener.EndAcceptTcpClient(asyncResult);
-
-            Console.WriteLine("Incoming connection from '{0}' received.", remoteClient.Client.RemoteEndPoint);
+            
+            Console.WriteLine("Incoming connection from {0} received.", remoteClient.Client.RemoteEndPoint);
 
             _listener.BeginAcceptTcpClient(new AsyncCallback(OnClientConnect), null);
             RegisterClient(remoteClient);
@@ -70,13 +71,16 @@ namespace Monmer.Network
             switch (message.Command)
             {
                 case MessageCommand.Handshake:
-                    OnHandshake(connectionID);
+                    OnHandshake(connectionID, message);
                     break;
             }
         }
 
-        private static void OnHandshake(int connectionID)
+        private static void OnHandshake(int connectionID, Message message)
         {
+            var data = (HandshakePayload)message.Payload;
+            //Console.WriteLine("Server has Acknowleged Handshake from {0} @ {1}", RemoteClients[connectionID].Socket.Client.RemoteEndPoint, data.Timestamp);
+
             // Send Handshake Acknowlegment to Client
             SendToClient(connectionID, Message.Create(MessageCommand.HandshakeAck));
         }
